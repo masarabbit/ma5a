@@ -53,16 +53,16 @@ function init() {
   }
 
   // TODO add hover animation effect
-  const animateSvg = ({ target, start, end, interval, speed }) => {
+  const animateSvg = ({ target, start, end, data, speed }) => {
     const startFrame = start || 0
     let i = startFrame
-    clearInterval(interval)
-    interval = setInterval(()=> {
+    clearInterval(data.interval)
+    data.interval = setInterval(()=> {
       target.style.marginLeft = `${-(i * 100)}%`
       i = i >= end
         ? startFrame
         : i + 1
-    }, speed || 100)
+    }, speed || 200)
   }
 
   const createThumbs = data => {
@@ -96,7 +96,7 @@ function init() {
               data[+thumb.dataset.id].hovered = true
               animateSvg({
                 target: target.childNodes[i].childNodes[1].childNodes[1],
-                interval: data[+thumb.dataset.id].interval,
+                data: data[+thumb.dataset.id],
                 end: data[+thumb.dataset.id].frameNo - 1,
               })
             } 

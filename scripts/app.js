@@ -12,7 +12,6 @@ function init() {
       bgColor: 'red',
       description: 'test test test test',
       interval: null,
-      hovered: false,
     },
     {
       svg(main, sub) {
@@ -25,7 +24,6 @@ function init() {
       bgColor: 'white',
       description: 'test test test test 2',
       interval: null,
-      hovered: false,
     },
     {
       svg(main, sub) {
@@ -38,7 +36,6 @@ function init() {
       bgColor: 'yellow',
       description: 'test test test test 3',
       interval: null,
-      hovered: false,
     },
   ]
 
@@ -92,8 +89,8 @@ function init() {
         
           c.addEventListener('mouseover', () =>{
             // console.log('hover', target.childNodes[i].childNodes[1].childNodes[1])
-            if (!data[+thumb.dataset.id].hovered){
-              data[+thumb.dataset.id].hovered = true
+            console.log('hovered', data[+thumb.dataset.id])
+            if (!data[+thumb.dataset.id].interval){
               animateSvg({
                 target: target.childNodes[i].childNodes[1].childNodes[1],
                 data: data[+thumb.dataset.id],
@@ -101,14 +98,10 @@ function init() {
               })
             } 
           })
-          console.log(data[+thumb.dataset.id].interval)
-   
         c.addEventListener('mouseleave', ()=>{
-          console.log('test', data[+thumb.dataset.id].hovered)
-          data[+thumb.dataset.id].hovered = false
           clearInterval(data[+thumb.dataset.id].interval)
+          data[+thumb.dataset.id].interval = null
         })
-        // TODO not working
       }
     })
   }

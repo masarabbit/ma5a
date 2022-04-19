@@ -64,6 +64,7 @@ body {
 
 .icon {
   height: 50px;
+  cursor: pointer;
 }
 
 .thumb p {

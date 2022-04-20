@@ -128,14 +128,17 @@ a:hover { text-decoration: underline; }
 .iframe_nav {
   display: flex;
   justify-content: flex-end;
-  height: 20px;
+  height: 32px;
   background-color: cyan;
 }
 
 .iframe_button {
-  width: 20px;
-  height: 20px;
-  border: 1px solid hotpink;
+  width: 32px;
+  height: 32px;
+  background-repeat: no-repeat !important;
+  background-size: 32px !important; 
+  image-rendering: pixelated;
+  /* border: 1px solid hotpink; */
 }
 
 iframe {
@@ -146,6 +149,9 @@ iframe {
   border: none;
 }
 
+.close {
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAGNJREFUOE+1U0kOABAM5P+PJkSlatpKJlxEZtG1FvLUpW/rlndmu/nWYAgzExFPriYfgBPCxbG/RSYQQ+Eiomvs5asFOpuLHxXMmkDuNwMqBaqIVBupQXoRSzvhKNPLlG2fi3csRxgRO/A0ngAAAABJRU5ErkJggg==);
+}
 
 /* .indicator {
   position: absolute;

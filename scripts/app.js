@@ -1,5 +1,9 @@
 function init() {
 
+  //TODO need new close icon, smaller one
+  //TODO add resize
+
+
   const data = [
     {
       svg(main, sub) {
@@ -12,6 +16,7 @@ function init() {
       bgColor: 'red',
       description: 'test test test test',
       interval: null,
+      url: 'https://codepen.io/Ma5a/full/BapbQam'
     },
     {
       svg(main, sub) {
@@ -24,6 +29,7 @@ function init() {
       bgColor: 'white',
       description: 'test test test test 2',
       interval: null,
+      url: 'https://codepen.io/Ma5a/full/MWrZPOP'
     },
     {
       svg(main, sub) {
@@ -36,8 +42,54 @@ function init() {
       bgColor: 'yellow',
       description: 'test test test test 3',
       interval: null,
+      url: 'https://codepen.io/Ma5a/full/bGgxaYy'
     },
   ]
+  
+  const addEvents = (target, action, event, arr) => arr.forEach(x => event === 'remove' 
+    ? target.removeEventListener(x, action) 
+    : target.addEventListener(x, action))
+  const mouseUp = (t, a, e) => addEvents(t, a, e, ['mouseup', 'touchend'])
+  const mouseMove = (t, a, e) => addEvents(t, a, e, ['mousemove', 'touchmove'])
+  const mouseDown = (t, a, e) => addEvents(t, a, e, ['mousedown', 'touchstart'])
+  const mouseEnter = (t, a, e) => addEvents(t, a, e, ['mouseenter', 'touchstart'])
+  const mouseLeave = (t, a, e) => addEvents(t, a, e, ['mouseleave', 'touchmove'])
+
+  const setTargetPos = (target, x, y) => Object.assign(target.style, { left: `${x}px`, top: `${y}px` })
+
+  const makeDraggable = (target, targetData) => {
+    const pos = { a: 0, b: 0, c: 0, d: 0 }
+
+    const onGrab = e => {
+      pos.c = e.type === 'mousedown' ? e.clientX : e.touches[0].clientX
+      pos.d = e.type === 'mousedown' ? e.clientY : e.touches[0].clientY
+      mouseUp(document, onLetGo, 'add')
+      mouseMove(document, onDrag, 'add')
+    }
+    const onDrag = e => {
+      const x = e.type === 'mousemove' ? e.clientX : e.touches[0].clientX
+      const y = e.type === 'mousemove' ? e.clientY : e.touches[0].clientY
+      pos.a = pos.c - x
+      pos.b = pos.d - y
+      pos.c = x
+      pos.d = y
+      if (targetData.handleActive) {
+        const newX = target.offsetLeft - pos.a
+        const newY = target.offsetTop - pos.b
+
+        // Object.assign(targetData, { 
+        //   x: newX - artboard.offsetLeft, 
+        //   y: newY - artboard.offsetTop
+        // })
+        setTargetPos(target, newX, newY)
+      }
+    }
+    const onLetGo = () => {
+      mouseUp(document, onLetGo, 'remove')
+      mouseMove(document, onDrag, 'remove')
+    }
+    mouseDown(target, onGrab, 'add')
+  }
 
   const svgWrapper = ({ content, color, w, h }) =>{
     return `<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" fill="${color || 'black'}"
@@ -81,8 +133,7 @@ function init() {
     }).join('')
   }
 
-  const openWindow = () =>{
-    console.log('click')
+  const openWindow = data =>{
     const window = document.createElement('div')
     elements.wrapper.append(window)
     window.classList.add('iframe_wrapper')
@@ -90,10 +141,13 @@ function init() {
       <div class="iframe_nav">
         <div class="iframe_button"></div>
         <div class="iframe_button"></div>
-        <div class="iframe_button"></div>
+        <div class="iframe_button close"></div>
       </div>
-      <iframe src="https://codepen.io/Ma5a/full/BapbQam" />
+      <iframe src="${data.url}" />
     `
+    makeDraggable(window, data)
+    mouseEnter(window.childNodes[1], ()=> data.handleActive = true,'add')
+    mouseLeave(window.childNodes[1], ()=> data.handleActive = false,'remove')
   }
 
   const createThumbsAndHoverEffects = (target, data) =>{
@@ -102,21 +156,21 @@ function init() {
       if (i % 2 !== 0) {
         const targetNode = target.childNodes[i].childNodes[1].childNodes[1]
         const thumbData = data[+targetNode.dataset.id]
-        
-          c.addEventListener('mouseover', () =>{
-            if (!thumbData.interval){
-              animateSvg({
-                target: targetNode,
-                data: thumbData,
-                end: thumbData.frameNo - 1,
-              })
-            } 
-          })
-        c.addEventListener('mouseleave', ()=>{
+        mouseEnter(c, ()=> {
+          if (!thumbData.interval){
+            animateSvg({
+              target: targetNode,
+              data: thumbData,
+              end: thumbData.frameNo - 1,
+            })
+          } 
+        }, 'add')
+
+        mouseLeave(c, ()=> {
           clearInterval(thumbData.interval)
           thumbData.interval = null
-        })
-        c.addEventListener('click', openWindow)
+        }, 'add')
+        c.addEventListener('click', ()=> openWindow(thumbData))
       }
     })
   }

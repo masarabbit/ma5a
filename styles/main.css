@@ -119,6 +119,33 @@ a {
 
 a:hover { text-decoration: underline; }
 
+.iframe_wrapper {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+}
+
+.iframe_nav {
+  display: flex;
+  justify-content: flex-end;
+  height: 20px;
+  background-color: cyan;
+}
+
+.iframe_button {
+  width: 20px;
+  height: 20px;
+  border: 1px solid hotpink;
+}
+
+iframe {
+  margin: 0;
+  padding: 0;
+  width: 500px;
+  height: 300px;
+  border: none;
+}
+
 
 /* .indicator {
   position: absolute;

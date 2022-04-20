@@ -46,7 +46,8 @@ function init() {
   }
   
   const elements = {
-    menu: document.querySelector('.menu')
+    menu: document.querySelector('.menu'),
+    wrapper: document.querySelector('.wrapper')
   }
 
   // TODO add hover animation effect
@@ -80,33 +81,49 @@ function init() {
     }).join('')
   }
 
+  const openWindow = () =>{
+    console.log('click')
+    const window = document.createElement('div')
+    elements.wrapper.append(window)
+    window.classList.add('iframe_wrapper')
+    window.innerHTML = `
+      <div class="iframe_nav">
+        <div class="iframe_button"></div>
+        <div class="iframe_button"></div>
+        <div class="iframe_button"></div>
+      </div>
+      <iframe src="https://codepen.io/Ma5a/full/BapbQam" />
+    `
+  }
+
   const createThumbsAndHoverEffects = (target, data) =>{
     target.innerHTML = createThumbs(data)
     target.childNodes.forEach((c, i)=>{
       if (i % 2 !== 0) {
-        const thumb = target.childNodes[i].childNodes[1].childNodes[1]
-        
+        const targetNode = target.childNodes[i].childNodes[1].childNodes[1]
+        const thumbData = data[+targetNode.dataset.id]
         
           c.addEventListener('mouseover', () =>{
-            // console.log('hover', target.childNodes[i].childNodes[1].childNodes[1])
-            console.log('hovered', data[+thumb.dataset.id])
-            if (!data[+thumb.dataset.id].interval){
+            if (!thumbData.interval){
               animateSvg({
-                target: target.childNodes[i].childNodes[1].childNodes[1],
-                data: data[+thumb.dataset.id],
-                end: data[+thumb.dataset.id].frameNo - 1,
+                target: targetNode,
+                data: thumbData,
+                end: thumbData.frameNo - 1,
               })
             } 
           })
         c.addEventListener('mouseleave', ()=>{
-          clearInterval(data[+thumb.dataset.id].interval)
-          data[+thumb.dataset.id].interval = null
+          clearInterval(thumbData.interval)
+          thumbData.interval = null
         })
+        c.addEventListener('click', openWindow)
       }
     })
   }
 
   createThumbsAndHoverEffects(elements.menu, data)
+
+
 
   // console.log('test', data[0].svg())
 }

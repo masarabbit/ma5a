@@ -56,6 +56,10 @@ function init() {
   const mouseLeave = (t, a, e) => addEvents(t, a, e, ['mouseleave', 'touchmove'])
 
   const setTargetPos = (target, x, y) => Object.assign(target.style, { left: `${x}px`, top: `${y}px` })
+  const setTargetSize = (target, w, h) =>{
+    const unit = w * 0 === 0 ? 'px' : ''
+    Object.assign(target.style, { width: `${w}${unit}`, height: `${h}${unit}` })
+  }
 
   const makeDraggable = (target, targetData) => {
     const pos = { a: 0, b: 0, c: 0, d: 0 }
@@ -63,6 +67,7 @@ function init() {
     const onGrab = e => {
       pos.c = e.type === 'mousedown' ? e.clientX : e.touches[0].clientX
       pos.d = e.type === 'mousedown' ? e.clientY : e.touches[0].clientY
+      targetData.draggable = true
       mouseUp(document, onLetGo, 'add')
       mouseMove(document, onDrag, 'add')
     }
@@ -73,7 +78,7 @@ function init() {
       pos.b = pos.d - y
       pos.c = x
       pos.d = y
-      if (targetData.handleActive) {
+      if (targetData.draggable) {
         const newX = target.offsetLeft - pos.a
         const newY = target.offsetTop - pos.b
 
@@ -87,9 +92,51 @@ function init() {
     const onLetGo = () => {
       mouseUp(document, onLetGo, 'remove')
       mouseMove(document, onDrag, 'remove')
+      targetData.draggable = false
     }
     mouseDown(target, onGrab, 'add')
   }
+
+
+  const makeResizable = (target, targetData) =>{
+    const pos = { a: 0, b: 0, c: 0, d: 0 }
+    const handle = target.childNodes[1].childNodes[7]
+    console.log(handle)
+    
+    const onGrab = e =>{
+      targetData.resizable = true
+      targetData.draggable = false
+      pos.c = e.type[0] === 'm' ? e.clientX : e.touches[0].clientX
+      pos.d = e.type[0] === 'm' ? e.clientY : e.touches[0].clientY   
+      mouseUp(document, onLetGo, 'add')
+      mouseMove(document, onDrag, 'add')
+    }
+    const onDrag = e =>{
+      if (targetData.resizable) {
+        const x = e.type[0] === 'm' ? e.clientX : e.touches[0].clientX
+        const y = e.type[0] === 'm' ? e.clientY : e.touches[0].clientY
+        pos.a = x - pos.c
+        pos.b = y - pos.d
+        pos.c = x
+        pos.d = y
+
+        const { width, height } = target.getBoundingClientRect()
+        const newW = width + pos.a
+        const newH = height + pos.b
+        setTargetSize(target, newW, newH)
+        
+        setTargetSize(target.childNodes[3], newW - 2, newH - (2 + 20))
+      }
+    }
+    const onLetGo = () => {
+      mouseUp(document, onLetGo, 'remove')
+      mouseMove(document, onDrag, 'remove')
+      targetData.resizable = false
+    } 
+    mouseDown(handle, onGrab, 'add')
+
+  }
+
 
   const svgWrapper = ({ content, color, w, h }) =>{
     return `<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" fill="${color || 'black'}"
@@ -142,12 +189,25 @@ function init() {
         <div class="iframe_button"></div>
         <div class="iframe_button"></div>
         <div class="iframe_button close"></div>
+        <div class="handle"></div>
       </div>
       <iframe src="${data.url}" />
     `
     makeDraggable(window, data)
-    mouseEnter(window.childNodes[1], ()=> data.handleActive = true,'add')
-    mouseLeave(window.childNodes[1], ()=> data.handleActive = false,'remove')
+    makeResizable(window, data)
+    // TODO need to change how the handle and nav is handled so that resizable and draggable don't interfere with each other
+    // TODO need to stop iframe from interfering too, so maybe need something to change pointer event
+    // // console.log(
+    // data.draggable = true
+    // mouseEnter(window.childNodes[1], ()=> data.draggable = true,'add')
+    // console.log(window.childNodes[1].childNodes[7])
+    // mouseEnter(window.childNodes[1].childNodes[7], ()=> {
+    //   data.draggable = false
+    //   data.resizable = true
+    // },'add')
+    // mouseLeave(window.childNodes[1].childNodes[7], ()=> data.resizable = false,'add')
+
+    // mouseLeave(window.childNodes[1], ()=> data.draggable = false,'remove')
   }
 
   const createThumbsAndHoverEffects = (target, data) =>{

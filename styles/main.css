@@ -15,6 +15,7 @@ p, h1, h2, h3, h4 {
 
 body {
   background-color: rgb(5, 5, 53);
+  /* background-color: rgb(90, 90, 107); */
   font-family: sans-serif;
 }
 
@@ -123,22 +124,56 @@ a:hover { text-decoration: underline; }
   position: absolute;
   display: flex;
   flex-direction: column;
+  /* border: 1px solid hotpink; */
+  border: 1px solid cyan;
 }
+
+/* .iframe_wrapper:before {
+  content: '';
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  background-color: hotpink;
+} */
+
+/* .iframe_wrapper:before {
+  content: '';
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  width: calc(100% + 10px);
+  height: calc(100% + 10px);
+  z-index: -1;
+  background-color: cyan;
+} */
 
 .iframe_nav {
   display: flex;
   justify-content: flex-end;
-  height: 32px;
+  height: 20px;
   background-color: cyan;
+  cursor: all-scroll;
 }
 
 .iframe_button {
-  width: 32px;
-  height: 32px;
+  height: 20px;
+  width: 20px;
   background-repeat: no-repeat !important;
-  background-size: 32px !important; 
+  background-size: 20px !important; 
   image-rendering: pixelated;
   /* border: 1px solid hotpink; */
+}
+
+.handle {
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  height: 20px;
+  width: 20px;
+  background-color: yellow;
 }
 
 iframe {
